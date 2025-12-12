@@ -71,7 +71,7 @@ describe("La vista de HomeView.vue" , () =>{
         expect(wrapper.find(".error-state").text()).toContain("No se pudieron cargar los pokémon. Inténtalo de nuevo más tarde.")
     });
 
-    // Test Unitario
+    //Test Unitario
     test("La carga del imagen de cada card pokemon", async ()=>{
         global.fetch = vi.fn((url) => {
             if (url.includes('/pokemon/?')) {
@@ -120,7 +120,8 @@ describe("La vista de HomeView.vue" , () =>{
         expect(card.props('name')).toBe("bulbasaur")
         expect(card.props('to')).toBe("/pokemon/1")
         expect(card.props('img')).toBeDefined()
-        //subir
+        
+
         
     });
 

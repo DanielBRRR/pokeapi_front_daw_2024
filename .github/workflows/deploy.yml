@@ -25,7 +25,6 @@ jobs:
 
 
 
-
       - name: Deploy via SCP
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.USERNAME }}@${{ secrets.HOST }} "rm -rf /var/www/alumnos/${{ secrets.USERNAME }}/*"
