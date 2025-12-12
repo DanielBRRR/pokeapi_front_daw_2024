@@ -120,8 +120,10 @@ describe("La vista de HomeView.vue" , () =>{
         expect(card.props('name')).toBe("bulbasaur")
         expect(card.props('to')).toBe("/pokemon/1")
         expect(card.props('img')).toBeDefined()
+        //subir
         
     });
+
 
     // Test Unitario
     test("Muestra mensaje cuando pokemonList está vacío", async () => {
