@@ -25,7 +25,7 @@ describe("La integracion del componente pokemonBOx" , () =>{
         expect(wrapper.props('name')).toBe('bulbasaur')
         expect(wrapper.props('img')).toBe('bulbasaur.png')
         expect(wrapper.props('number')).toBe(1)
-        expect(wrapper.props('to')).toBe('//1')
+        expect(wrapper.props('to')).toBe('/pokemon/1')
     });
 
        // Test Unitario
