@@ -22,7 +22,7 @@ jobs:
         run: npm ci
 
       - name: Run unit tests
-        run: npm run test
+        run: npx vitest run
         # 👉 Si algún test falla:
         # - este paso falla
         # - el job se detiene
