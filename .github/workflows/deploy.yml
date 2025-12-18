@@ -23,11 +23,6 @@ jobs:
 
       - name: Run unit tests
         run: npx vitest run
-        # 👉 Si algún test falla:
-        # - este paso falla
-        # - el job se detiene
-        # - NO hay build
-        # - NO hay deploy
 
       - name: Build Vue
         run: npm run build
