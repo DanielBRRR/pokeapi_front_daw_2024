@@ -16,12 +16,18 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 18
+          cache: "npm"
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       - name: Run unit tests
-        run: npx run test
+        run: npm run test
+        # 👉 Si algún test falla:
+        # - este paso falla
+        # - el job se detiene
+        # - NO hay build
+        # - NO hay deploy
 
       - name: Build Vue
         run: npm run build
@@ -36,8 +42,10 @@ jobs:
 
       - name: Clean dist folder on server
         run: |
-          ssh ${{ secrets.USERNAME }}@${{ secrets.HOST }} "rm -rf /var/www/alumnos/${{ secrets.USERNAME }}/dist/*"
+          ssh ${{ secrets.USERNAME }}@${{ secrets.HOST }} \
+          "rm -rf /var/www/alumnos/${{ secrets.USERNAME }}/dist/*"
 
       - name: Deploy dist via SCP
         run: |
-          scp -r dist/* ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/var/www/alumnos/${{ secrets.USERNAME }}/dist/
+          scp -r dist/* \
+          ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/var/www/alumnos/${{ secrets.USERNAME }}/dist/
