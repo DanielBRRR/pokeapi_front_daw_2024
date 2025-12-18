@@ -1,4 +1,4 @@
-name: Deploy HTML to Server
+name: Deploy Vue to Server
 
 on:
   push:
@@ -12,14 +12,19 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 🔹 Necesario para Vitest
-      - name: Setup Node.js
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 18
 
       - name: Install dependencies
         run: npm install
+
+      - name: Run unit tests
+        run: npx run test
+
+      - name: Build Vue
+        run: npm run build
 
       - name: Setup SSH
         run: |
@@ -29,17 +34,10 @@ jobs:
           echo -e "Host *\n  StrictHostKeyChecking no\n  IdentitiesOnly yes" > ~/.ssh/config
           chmod 600 ~/.ssh/config
 
-      # TESTS
-      - name: Deploy via SCP (with tests)
+      - name: Clean dist folder on server
         run: |
-          set -e
+          ssh ${{ secrets.USERNAME }}@${{ secrets.HOST }} "rm -rf /var/www/alumnos/${{ secrets.USERNAME }}/dist/*"
 
-          echo "Ejecutando tests unitarios..."
-          npx vitest run --reporter=verbose
-
-          echo "Tests OK, desplegando..."
-          ssh -o StrictHostKeyChecking=no ${{ secrets.USERNAME }}@${{ secrets.HOST }} \
-            "rm -rf /var/www/alumnos/${{ secrets.USERNAME }}/*"
-
-          scp -o StrictHostKeyChecking=no -r ./ \
-            ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/var/www/alumnos/${{ secrets.USERNAME }}/
+      - name: Deploy dist via SCP
+        run: |
+          scp -r dist/* ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/var/www/alumnos/${{ secrets.USERNAME }}/dist/
