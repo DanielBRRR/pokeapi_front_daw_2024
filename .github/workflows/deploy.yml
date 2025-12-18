@@ -1,19 +1,25 @@
 name: Deploy HTML to Server
 
-
 on:
   push:
-    branches: ["main",]
+    branches: ["main"]
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # 🔹 Necesario para Vitest
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install
 
       - name: Setup SSH
         run: |
@@ -23,9 +29,17 @@ jobs:
           echo -e "Host *\n  StrictHostKeyChecking no\n  IdentitiesOnly yes" > ~/.ssh/config
           chmod 600 ~/.ssh/config
 
-
-
-      - name: Deploy via SCP
+      # TESTS
+      - name: Deploy via SCP (with tests)
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.USERNAME }}@${{ secrets.HOST }} "rm -rf /var/www/alumnos/${{ secrets.USERNAME }}/*"
-          scp -o StrictHostKeyChecking=no -r ./ ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/var/www/alumnos/${{ secrets.USERNAME }}/
+          set -e
+
+          echo "Ejecutando tests unitarios..."
+          npx vitest run --reporter=verbose
+
+          echo "Tests OK, desplegando..."
+          ssh -o StrictHostKeyChecking=no ${{ secrets.USERNAME }}@${{ secrets.HOST }} \
+            "rm -rf /var/www/alumnos/${{ secrets.USERNAME }}/*"
+
+          scp -o StrictHostKeyChecking=no -r ./ \
+            ${{ secrets.USERNAME }}@${{ secrets.HOST }}:/var/www/alumnos/${{ secrets.USERNAME }}/
